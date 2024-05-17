@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumit's Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        footer {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .chatbox {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 70px);
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 5px 10px;
+            border-radius: 3px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .answer {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Sumit's Chatbot</h1>
+    </header>
+    <main>
+        <h2>Welcome to Sumit's Chatbot Page!(This chatbot is made using VertexAI 'gemini 1.0 pro')</h2>
+        <p>Ask me anything:</p>
+        <input type="text" id="userInput" placeholder="Type your query...">
+        <button onclick="sendMessage()">Ask</button>
+        <div class="chatbox" id="chat"></div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Sumit's Chatbot</p>
+    </footer>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            if (userInput.trim() === "") return;
+            var chat = document.getElementById("chat");
+            var userMessage = document.createElement("p");
+            userMessage.innerHTML = "<strong>You:</strong> " + userInput;
+            chat.appendChild(userMessage);
+            document.getElementById("userInput").value = "";
+
+            // Make AJAX request to the server
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/gemini", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var botMessage = document.createElement("div");
+                    botMessage.className = "answer";
+                    botMessage.innerHTML = "<strong>Chatbot:</strong> " + response.content;
+                    chat.appendChild(botMessage);
+                    // Scroll to bottom of chatbox
+                    chat.scrollTop = chat.scrollHeight;
+                }
+            };
+            xhr.send("userInput=" + encodeURIComponent(userInput));
+        }
+    </script>
+</body>
+
+</html>
